@@ -1,3 +1,69 @@
+<template>
+  <div id="post" v-if="blogpost">
+    <div class="l-wrapper">
+      <hr class="separator-hr" />
+    </div>
+
+    <article class="blog-post-article">
+      <div class="blog-post-inner">
+        <div class="blog-post-image-wrapper">
+          <prismic-image class="blog-post-image" :field="blogpost.data.image" />
+        </div>
+        <div class="blog-post-title">
+          <prismic-rich-text :field="blogpost.data.title" />
+        </div>
+        <div class="blog-post-rich-content">
+          <prismic-rich-text :field="blogpost.data.rich_content" />
+        </div>
+        <div class="blog-post-author-wrapper">
+          <prismic-image v-if="blogpost.data.author.data"
+            class="blog-post-author-picture"
+            :field="blogpost.data.author.data.picture" />
+          <div>
+            <p v-if="blogpost.data.author.data" class="blog-post-author-name">
+                {{ $prismic.richTextAsPlain(blogpost.data.author.data.name) }}
+            </p>
+            <p v-if="blogpost.data.author.data" class="blog-post-author-bio">
+              {{ $prismic.richTextAsPlain(blogpost.data.author.data.bio) }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <div :data-wio-id="blogpost.id"></div>
+  </div>
+</template>
+
+<script>
+const graphQuery = `{
+  blog_post {
+    ...blog_postFields
+    author {
+      name
+      bio
+      picture
+    }
+  }
+}`;
+
+export default {
+  data: () => ({
+    blogpost: null,
+  }),
+  async created() {
+    const { uid } = this.$route.params;
+    const blogpost = await this.$prismic.client.getByUID('blog_post', uid, { graphQuery });
+    this.blogpost = blogpost;
+  },
+  methods: {
+    handleClickAddCart() {
+      window.alert('No. Not today.\nWe\'re integrating the GraphQL API at the moment, so coffee delivery is temporarily unavailable.');
+    },
+  },
+};
+</script>
+
 <style lang="scss">
 .blog-post-article {
   padding: 70px 0 130px;

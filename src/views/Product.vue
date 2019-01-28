@@ -1,3 +1,115 @@
+<template>
+  <div id="product" v-if="product">
+    <div class="l-wrapper">
+      <hr class="separator-hr" />
+    </div>
+
+    <div class="product-sections-wrapper">
+
+      <section>
+        <div class="l-wrapper">
+          <div class="product-hero-inner">
+            <prismic-image class="product-hero-image" :field="product.data.product_image" />
+            <div class="product-hero-content">
+              <div class="product-hero-name">
+                <prismic-rich-text :field="product.data.product_name" />
+              </div>
+              <div class="product-hero-rich-content">
+                <prismic-rich-text :field="product.data.rich_content" />
+              </div>
+              <div class="product-hero-button-wrapper">
+                <prismic-link class="a-button a-button--filled"
+                  :field="product.data.button_link"
+                  v-on:click="handleClickAddCart">
+                  {{ $prismic.richTextAsPlain(product.data.button_label) }}
+                </prismic-link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="product-description">
+        <div class="l-wrapper">
+          <div class="product-description-title">
+            <prismic-rich-text :field="product.data.title" />
+          </div>
+          <div class="product-description-content">
+            <prismic-rich-text :field="product.data.product_description" />
+          </div>
+        </div>
+      </section>
+
+      <div class="product-separator-wrapper">
+        <div class="l-wrapper">
+          <hr class="separator-hr" />
+        </div>
+      </div>
+
+      <section>
+        <div class="l-wrapper">
+          <header class="products-grid-header">
+            <div class="products-grid-header-title">
+              <prismic-rich-text :field="product.data.related_products_title" />
+            </div>
+          </header>
+        </div>
+        <div class="products-grid-items-wrapper">
+          <div v-for="(item, index) in product.data.related_products"
+            :key="index"
+            class="products-grid-item-wrapper">
+              <prismic-image class="products-grid-item-image"
+                :field="item.product1.data.product_image" />
+              <p class="products-grid-item-name">
+                <prismic-link :field="item.product1">
+                  {{ $prismic.richTextAsPlain(item.product1.data.product_name) }}
+                </prismic-link>
+              </p>
+              <p class="products-grid-item-subtitle">
+                {{ $prismic.richTextAsPlain(item.product1.data.sub_title) }}
+              </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <div :data-wio-id="product.id"></div>
+  </div>
+</template>
+
+<script>
+const graphQuery = `{
+product {
+  ...productFields
+  related_products {
+    ...related_productsFields
+    product1 {
+      product_image
+      product_name
+      sub_title
+    }
+  }
+}
+}`;
+
+export default {
+  data: () => ({
+    product: null,
+  }),
+  async created() {
+    const { uid } = this.$route.params;
+    const product = await this.$prismic.client.getByUID('product', uid, { graphQuery });
+    this.product = product;
+  },
+  methods: {
+    handleClickAddCart() {
+      window.alert('No. Not today.\nWe\'re integrating the GraphQL API at the moment, so coffee delivery is temporarily unavailable.');
+    },
+  },
+};
+</script>
+
 <style lang="scss">
 .product-sections-wrapper {
   padding: 70px 0 130px;

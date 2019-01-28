@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <div data-wio-id={home.data.id}></div>
+    <div :data-wio-id="home.id"></div>
   </div>
 </template>
 

@@ -6,6 +6,7 @@ import Products from './views/Products.vue';
 import Product from './views/Product.vue';
 import BlogHome from './views/BlogHome.vue';
 import BlogPost from './views/BlogPost.vue';
+import NotFound from './views/NotFound.vue';
 
 Vue.use(Router);
 
@@ -38,18 +39,18 @@ export default new Router({
       path: '/blog',
       name: 'blog',
       meta: { layout: 'default' },
-      component: () => BlogHome,
+      component: BlogHome,
     },
     {
       path: '/blog/:uid',
       name: 'blogpost',
       meta: { layout: 'default' },
-      component: () => BlogPost,
+      component: BlogPost,
     },
     {
       path: '*',
       name: 'notfound',
-      component: () => import('./views/NotFound.vue'),
+      component: NotFound,
     },
   ],
 });
